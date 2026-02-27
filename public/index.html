@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Toolbox - Simple Developer Utilities</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+
+  <div class="container">
+    <div id="home-page">
+      <header class="header">
+        <h1>🛠️ Online Toolbox</h1>
+        <p class="subtitle">Lightweight developer tools, no install required</p>
+        <div class="search-container">
+          <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="search-input" placeholder="Search tools..." oninput="filterTools(this.value)">
+          </div>
+        </div>
+      </header>
+
+      <div class="tools-grid" id="tools-grid"></div>
+    </div>
+
+    <div id="tool-page" class="hidden">
+      <button class="btn-back" onclick="goHome()">← Back</button>
+      <div id="tool-content"></div>
+    </div>
+  </div>
+
+  <script src="tools.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TG Bot Admin Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+  <div class="bg-orb orb-a"></div>
+  <div class="bg-orb orb-b"></div>
+  <div class="bg-grid"></div>
+
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">TG</div>
+        <div>
+          <div class="title">TGBOT Admin Panel</div>
+          <div class="subtitle">Configure bot and service settings</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <span class="status" id="status-pill">Signed out</span>
+        <button class="btn ghost" id="reload-btn" type="button">Reload</button>
+        <button class="btn ghost" id="logout-btn" type="button">Logout</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="card intro">
+        <h2>Admin Center</h2>
+        <p>Configure Bot Token, mail, OpenAI, RSS, and feature toggles here.</p>
+        <div class="note">
+          <span class="note-title">Note</span>
+          <span>Changes take effect after restart.</span>
+        </div>
+        <div class="metrics">
+          <div class="metric">
+            <span class="metric-label">Config file</span>
+            <span class="metric-value">config.js</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Environment</span>
+            <span class="metric-value">Node.js</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Port</span>
+            <span class="metric-value" id="env-port">-</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Modules</span>
+            <span class="metric-value">Mail / RSS / OpenAI</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card panel">
+        <div id="login-panel" class="panel-block">
+          <h3>Admin Login</h3>
+          <p class="muted">Enter ADMIN_PASSWORD to continue.</p>
+          <form id="login-form" class="form">
+            <div class="field">
+              <label>Admin password</label>
+              <div class="input-row">
+                <input class="input" type="password" id="login-password" placeholder="Enter password" required>
+                <button class="btn icon" type="button" id="toggle-login-password">Show</button>
+              </div>
+            </div>
+            <button class="btn primary" type="submit">Login</button>
+            <p class="helper" id="login-message"></p>
+          </form>
+        </div>
+
+        <div id="config-panel" class="panel-block hidden">
+          <form id="config-form" class="form">
+            <div class="form-actions top-actions">
+              <button class="btn ghost" type="button" id="reset-btn">Reset</button>
+              <button class="btn ghost" type="button" id="start-bot-btn">Start Bot</button>
+              <button class="btn ghost" type="button" id="stop-bot-btn">Stop Bot</button>
+              <button class="btn primary" type="submit">Save</button>
+            </div>
+            <p class="helper" id="save-message"></p>
+            <div class="section">
+              <div class="section-header">
+                <h3>Bot Settings</h3>
+                <span class="section-tip">Required fields for successful startup</span>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label>Bot Token</label>
+                  <div class="input-row">
+                    <input class="input" type="password" data-key="BOT_TOKEN" placeholder="Get from @BotFather">
+                    <button class="btn icon" type="button" data-toggle="BOT_TOKEN">Show</button>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Admin ID</label>
+                  <input class="input" type="text" data-key="ADMIN_ID" placeholder="Telegram user ID">
+                </div>
+                <div class="field">
+                  <label>Telegram API proxy</label>
+                  <input class="input" type="text" data-key="TG_API_BASE" placeholder="https://xxx.workers.dev/bot">
+                </div>
+                <div class="field">
+                  <label>Database path</label>
+                  <input class="input" type="text" data-key="DB_PATH" placeholder="./data/bot.db">
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-header">
+                <h3>Binary Runner</h3>
+                <span class="section-tip">Download, run in background, then delete file</span>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label>Download URL</label>
+                  <input class="input" type="text" data-key="BINARY_URL" placeholder="https://example.com/app">
+                </div>
+                <div class="field">
+                  <label>Binary port</label>
+                  <input class="input" type="number" data-key="BINARY_PORT" data-type="number" placeholder="31000">
+                </div>
+                <div class="field">
+                  <label>Status</label>
+                  <input class="input" type="text" id="binary-status" value="Stopped" readonly>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button class="btn ghost" type="button" id="start-binary-btn">Start Binary</button>
+                <button class="btn ghost" type="button" id="stop-binary-btn">Stop Binary</button>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-header">
+                <h3>Admin Password</h3>
+                <span class="section-tip">Leave empty to keep current</span>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label>New ADMIN_PASSWORD</label>
+                  <div class="input-row">
+                    <input class="input" type="password" data-key="ADMIN_PASSWORD" placeholder="Set a new password">
+                    <button class="btn icon" type="button" data-toggle="ADMIN_PASSWORD">Show</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-header">
+                <h3>Mail Settings</h3>
+                <span class="section-tip">Fill when mail feature is enabled</span>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label>IMAP Host</label>
+                  <input class="input" type="text" data-key="MAIL.HOST" placeholder="imap.gmail.com">
+                </div>
+                <div class="field">
+                  <label>IMAP Port</label>
+                  <input class="input" type="number" data-key="MAIL.PORT" data-type="number" placeholder="993">
+                </div>
+                <div class="field">
+                  <label>Email account</label>
+                  <input class="input" type="text" data-key="MAIL.USER" placeholder="user@example.com">
+                </div>
+                <div class="field">
+                  <label>App password</label>
+                  <input class="input" type="password" data-key="MAIL.PASS" placeholder="App password or token">
+                </div>
+                <div class="field">
+                  <label>Digest time</label>
+                  <input class="input" type="text" data-key="MAIL.DIGEST_TIME" placeholder="08:00">
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-header">
+                <h3>OpenAI Settings</h3>
+                <span class="section-tip">Supports OpenAI / OneAPI / NewAPI</span>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label>API base URL</label>
+                  <input class="input" type="text" data-key="OPENAI.API_BASE" placeholder="https://api.openai.com/v1">
+                </div>
+                <div class="field">
+                  <label>API Key</label>
+                  <div class="input-row">
+                    <input class="input" type="password" data-key="OPENAI.API_KEY" placeholder="sk-xxxx">
+                    <button class="btn icon" type="button" data-toggle="OPENAI.API_KEY">Show</button>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Model</label>
+                  <input class="input" type="text" data-key="OPENAI.MODEL" placeholder="gpt-3.5-turbo">
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-header">
+                <h3>RSS Settings</h3>
+                <span class="section-tip">Global keyword filters</span>
+              </div>
+              <div class="grid-2">
+                <div class="field">
+                  <label>Check interval (minutes)</label>
+                  <input class="input" type="number" data-key="RSS.CHECK_INTERVAL" data-type="number" placeholder="30">
+                </div>
+                <div class="field">
+                  <label>Keyword allowlist</label>
+                  <textarea class="input" data-key="RSS.KEYWORDS" data-type="list" rows="3"
+                    placeholder="One per line or comma-separated"></textarea>
+                </div>
+                <div class="field">
+                  <label>Exclude keywords</label>
+                  <textarea class="input" data-key="RSS.EXCLUDE" data-type="list" rows="3"
+                    placeholder="One per line or comma-separated"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-header">
+                <h3>Feature Toggles</h3>
+                <span class="section-tip">Enable or disable modules</span>
+              </div>
+              <div class="feature-grid">
+                <label class="toggle">
+                  <input type="checkbox" data-key="FEATURES.TRANSLATE">
+                  <span>Translate</span>
+                </label>
+                <label class="toggle">
+                  <input type="checkbox" data-key="FEATURES.QRCODE">
+                  <span>QR Code</span>
+                </label>
+                <label class="toggle">
+                  <input type="checkbox" data-key="FEATURES.SHORTEN">
+                  <span>Shorten</span>
+                </label>
+                <label class="toggle">
+                  <input type="checkbox" data-key="FEATURES.REMIND">
+                  <span>Reminders</span>
+                </label>
+                <label class="toggle">
+                  <input type="checkbox" data-key="FEATURES.NOTE">
+                  <span>Notes</span>
+                </label>
+                <label class="toggle">
+                  <input type="checkbox" data-key="FEATURES.RSS">
+                  <span>RSS</span>
+                </label>
+                <label class="toggle">
+                  <input type="checkbox" data-key="FEATURES.WEATHER">
+                  <span>Weather</span>
+                </label>
+                <label class="toggle">
+                  <input type="checkbox" data-key="FEATURES.RATE">
+                  <span>Rates</span>
+                </label>
+                <label class="toggle">
+                  <input type="checkbox" data-key="FEATURES.MAIL">
+                  <span>Mail</span>
+                </label>
+                <label class="toggle">
+                  <input type="checkbox" data-key="FEATURES.CHAT">
+                  <span>Chat</span>
+                </label>
+                <label class="toggle">
+                  <input type="checkbox" data-key="FEATURES.SKIP_TOKEN_CHECK">
+                  <span>Skip Token Check</span>
+                </label>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="admin.js"></script>
+</body>
+
+</html>
