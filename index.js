@@ -472,7 +472,7 @@ async function translateText(text, targetLang = 'zh-CN') {
     const result = await translate(text, { to: targetLang });
     return { success: true, text: result.text, from: result.from.language.iso, to: targetLang };
   } catch (error) {
-    console.error('翻译错误:', error.message);
+    
     return { success: false, error: error.message };
   }
 }
@@ -571,7 +571,7 @@ async function shortenUrl(url) {
     }
     return { success: false, error: data.error || '未知错误' };
   } catch (error) {
-    console.error('短链生成错误:', error.message);
+    
     return { success: false, error: error.message };
   }
 }
@@ -838,7 +838,7 @@ async function getWeather(city) {
       windDir: current.winddir16Point,
     };
   } catch (error) {
-    console.error('天气查询错误:', error.message);
+    
     return { success: false, error: error.message };
   }
 }
@@ -893,7 +893,7 @@ async function getExchangeRate(from, to, amount) {
       rate: data.info?.rate?.toFixed(4) || 'N/A',
     };
   } catch (error) {
-    console.error('汇率查询错误:', error.message);
+    
     return { success: false, error: error.message };
   }
 }
@@ -1184,7 +1184,7 @@ function setupChatCommand(bot) {
       const reply = await callOpenAI(userInput);
       await ctx.reply(`💬 *回复建议*\n\n对方说：「${userInput}」\n\n${reply}`, { parse_mode: 'Markdown' });
     } catch (err) {
-      console.error('Chat API error:', err.message);
+      
       await ctx.reply(`❌ 生成失败: ${err.message}`);
     }
   };
@@ -1751,11 +1751,11 @@ function startServer() {
   const port = Number(process.env.PORT || 3097);
   return new Promise(resolve => {
     const server = app.listen(port, () => {
-      console.log(`Admin panel started: http://localhost:${port}`);
+      
       resolve(server);
     });
     server.on('error', err => {
-      console.error('Admin panel failed to start:', err.message);
+      
       resolve(null);
     });
   });
@@ -1767,6 +1767,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error('Start failed:', err.message);
+  
   process.exit(1);
 });
